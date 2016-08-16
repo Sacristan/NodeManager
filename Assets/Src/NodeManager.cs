@@ -4,19 +4,23 @@ using System.Collections.Generic;
 public class NodeManager : MonoBehaviour
 {
     [SerializeField]
-    private List<Node> nodes = new List<Node>();
+    private List<Node> nodes = new List<Node>(1);
 
     [SerializeField]
     private GameObject buttonTemplate;
 
-    public void AddNew()
+    public Node[] Nodes { get { return nodes.ToArray(); } }
+
+    public void AddNode()
     {
         nodes.Add(CreateNode());
     }
 
-    void Remove(int index)
+    public void RemoveNodeAt(int index)
     {
+        Node node = nodes[index];
         nodes.RemoveAt(index);
+        DestroyImmediate(node.gameObject);
     }
 
     private Node CreateNode()
