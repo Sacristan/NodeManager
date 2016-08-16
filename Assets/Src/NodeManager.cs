@@ -1,32 +1,22 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class NodeManager : MonoBehaviour
 {
-    private static NodeManager instance;
-
     [SerializeField]
-    private Node[] nodes;
+    private List<Node> nodes = new List<Node>();
 
     [SerializeField]
     private GameObject buttonTemplate;
 
-    void Awake()
+    public void AddNew()
     {
-        if (instance == null) instance = this;
-        else Destroy(this);
+        nodes.Add(CreateNode());
     }
 
-    public void BuildObject()
+    void Remove(int index)
     {
-        List<Node> list = nodes.ToList();
-
-        Node node = CreateNode();
-        list.Add(node);
-
-        nodes = list.ToArray<Node>();
+        nodes.RemoveAt(index);
     }
 
     private Node CreateNode()

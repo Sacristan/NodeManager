@@ -12,7 +12,7 @@ public class NodeManagerEditor : Editor
         NodeManager nodeManager = (NodeManager) target;
         if (GUILayout.Button("Create Button"))
         {
-            nodeManager.BuildObject();
+            nodeManager.AddNew();
         }
     }
 }
