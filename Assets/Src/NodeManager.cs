@@ -9,7 +9,7 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject buttonTemplate;
 
-    public Node[] Nodes { get { return nodes.ToArray(); } }
+    public List<Node> Nodes { get { return nodes; } }
 
     public void AddNode()
     {
@@ -26,6 +26,7 @@ public class NodeManager : MonoBehaviour
     private Node CreateNode()
     {
         GameObject button = Instantiate(buttonTemplate, GetPositionForNode(), Quaternion.identity) as GameObject;
+        button.name = "Node" + (nodes.Count+1);
         button.transform.SetParent(transform);
         return button.GetComponent<Node>();
     }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using System.Linq;
 
 [CustomEditor(typeof(NodeManager))]
 public class NodeManagerEditor : Editor
@@ -25,7 +26,7 @@ public class NodeManagerEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Add New"))
+        if (GUILayout.Button("Add Node"))
         {
             t.AddNode();
         }
@@ -36,8 +37,13 @@ public class NodeManagerEditor : Editor
         for (int i = 0; i < ThisList.arraySize; i++)
         {
             //SerializedProperty MyListRef = ThisList.GetArrayElementAtIndex(i);
+
+            if (t.Nodes.ElementAtOrDefault(i) == null) continue;
+
+            Node node = t.Nodes[i];
+
             GUILayout.BeginHorizontal();
-            GUILayout.Label(string.Format("Node{0} {1}", i, t.Nodes[i].gameObject.name));
+            GUILayout.Label(node.gameObject.name);
             if (GUILayout.Button("X"))
             {
                 t.RemoveNodeAt(i);
