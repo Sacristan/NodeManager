@@ -36,18 +36,19 @@ public class NodeManagerEditor : Editor
 
         for (int i = 0; i < ThisList.arraySize; i++)
         {
-            //SerializedProperty MyListRef = ThisList.GetArrayElementAtIndex(i);
-
             if (t.Nodes.ElementAtOrDefault(i) == null) continue;
 
             Node node = t.Nodes[i];
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(node.gameObject.name);
+
+            if (node.NextNode != null && GUILayout.Button("G"))
+                node.GeneratePoints();
+
             if (GUILayout.Button("X"))
-            {
                 t.RemoveNodeAt(i);
-            }
+
             GUILayout.EndHorizontal();
         }
 

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class NodeManager : MonoBehaviour
 {
     [SerializeField]
-    private List<Node> nodes = new List<Node>(1);
+    private List<Node> nodes;
 
     [SerializeField]
     private GameObject buttonTemplate;
@@ -21,6 +22,14 @@ public class NodeManager : MonoBehaviour
         Node node = nodes[index];
         nodes.RemoveAt(index);
         DestroyImmediate(node.gameObject);
+    }
+
+    public Node GetNodeAtIndex(int index)
+    {
+        if (Nodes.ElementAtOrDefault(index) == null)
+            return null;
+        else
+            return Nodes[index];
     }
 
 }
