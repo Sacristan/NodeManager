@@ -21,6 +21,7 @@ public class NodeManagerEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        DrawDefaultInspector();
         GetTarget.Update();
 
         EditorGUILayout.Space();
@@ -43,8 +44,15 @@ public class NodeManagerEditor : Editor
             GUILayout.BeginHorizontal();
             GUILayout.Label(node.gameObject.name);
 
-            if (node.NextNode != null && GUILayout.Button("G"))
-                node.GeneratePoints();
+            if (node.NextNode != null)
+            {
+                if (GUILayout.Button("G"))
+                    node.GenerateKnobs();
+
+                if (GUILayout.Button("C"))
+                    node.CleanUpKnobs();
+
+            }
 
             if (GUILayout.Button("X"))
                 t.RemoveNodeAt(i);

@@ -9,24 +9,19 @@ public class Node : MonoBehaviour
     private NodeManager _nodeManager;
     private int _index;
 
-    List<Vector2> points;
     public Node NextNode { get { return _nodeManager.GetNodeAtIndex(_index + 1); } }
 
-
     int step = 50;
-    float distance;
-    Vector2 direction;
+    private List<GameObject> knobs;
 
-
-    public void GeneratePoints()
+    public void GenerateKnobs()
     {
         Node nextNode = NextNode;
         if (nextNode != null)
         {
-            direction = (Vector2)(nextNode.transform.position - transform.position).normalized;
+            Vector2 direction = (nextNode.transform.position - transform.position).normalized;
 
-            Image image = GetComponent<Image>();
-
+            //Image image = GetComponent<Image>();
             //Vector2 sizeDelta = image.rectTransform.rect.center;
 
             Vector2 startPos = transform.position;
@@ -34,28 +29,28 @@ public class Node : MonoBehaviour
 
             //Debug.DrawLine(startPos, endPos, Color.red);
 
-            distance = Vector2.Distance(startPos, endPos);
+            float distance = Vector2.Distance(startPos, endPos);
 
-            points = new List<Vector2>();
+            CleanUpKnobs();
             for (int i = step; i < distance; i += step)
             {
                 Vector2 calculatedPoint = new Vector2(
                     transform.position.x + i * direction.x,
                     transform.position.y + i * direction.y
                 );
-                points.Add(calculatedPoint);
+                CreateKnobAtPoint(calculatedPoint);
             }
-
         }
     }
 
-    void OnDrawGizmosSelected()
+    public void CleanUpKnobs()
     {
-        foreach (Vector2 point in points)
+        foreach (GameObject knob in knobs)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(point, 10);
+            DestroyImmediate(knob);
         }
+
+        knobs = new List<GameObject>();
     }
 
     public static Node Create(GameObject nodeTemplate, NodeManager nodeManager)
@@ -69,6 +64,13 @@ public class Node : MonoBehaviour
         node.Setup();
 
         return node;
+    }
+
+    private void CreateKnobAtPoint(Vector2 pos)
+    {
+        GameObject knob = Instantiate(_nodeManager.KnobTemplate, pos, Quaternion.identity) as GameObject;
+        knobs.Add(knob);
+        knob.transform.parent = transform;
     }
 
     private void Setup()

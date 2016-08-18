@@ -10,7 +10,11 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject buttonTemplate;
 
+    [SerializeField]
+    private GameObject knobTemplate;
+
     public List<Node> Nodes { get { return nodes; } }
+    public GameObject KnobTemplate { get { return knobTemplate; } }
 
     public void AddNode()
     {
