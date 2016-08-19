@@ -250,6 +250,11 @@ public class BezierCurve : MonoBehaviour {
 		
 		return GetPoint(p1, p2, t / curvePercent);
 	}
+
+    public void ClearPoints()
+    {
+        foreach (BezierPoint point in points) DestroyImmediate(point.gameObject);
+    }
 	
 	/// <summary>
 	/// 	- Get the index of the given point in this curve
@@ -304,6 +309,9 @@ public class BezierCurve : MonoBehaviour {
 	{
 		int limit = resolution+1;
 		float _res = resolution;
+
+        if (p1 == null || p2 == null) return;
+
 		Vector3 lastPoint = p1.position;
 		Vector3 currentPoint = Vector3.zero;
 		

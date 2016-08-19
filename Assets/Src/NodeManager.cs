@@ -12,7 +12,7 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject knobTemplate;
 
-    public Node[] Nodes { get { return nodes; } }
+    public int NodesSize { get { return nodes.Length; } }
     public GameObject KnobTemplate { get { return knobTemplate; } }
 
     public void AddNode()
@@ -32,25 +32,26 @@ public class NodeManager : MonoBehaviour
             List<Node> tmpList = new List<Node>(nodes);
             tmpList.RemoveAt(index);
             nodes = tmpList.ToArray();
-            DestroyImmediate(node.gameObject);
+
+            node.Cleanup();
         }
     }
 
     public Node GetNodeAtIndex(int index)
     {
-        if (index < 0 || Nodes.Length < index)
+        if (index < 0 || nodes.Length < index)
             return null;
         else
-            return Nodes[index];
+            return nodes[index];
     }
 
     public int IndexForNode(Node node)
     {
         int result = -1;
 
-        for(int i=0;i<Nodes.Length;i++)
+        for(int i=0;i< nodes.Length;i++)
         {
-            if (Nodes[i].Equals(node))
+            if (nodes[i].Equals(node))
             {
                 result = i;
                 break;

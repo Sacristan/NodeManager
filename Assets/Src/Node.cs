@@ -10,6 +10,8 @@ public class Node : MonoBehaviour
     private Node _prevNode = null;
 
     private int _index;
+    private BezierCurve _prevCurve;
+    private BezierCurve _nextCurve;
 
     public Node NextNode
     {
@@ -38,6 +40,33 @@ public class Node : MonoBehaviour
         }
     }
 
+    private BezierCurve PrevCurve
+    {
+        get
+        {
+            _prevCurve = gameObject.GetComponent<BezierCurve>();
+            if (_prevCurve == null) _prevCurve = gameObject.AddComponent<BezierCurve>();
+            return _prevCurve;
+        }
+    }
+
+    private BezierCurve NextCurve
+    {
+        get
+        {
+            if (NextNode == null)
+            {
+                return null;
+            }
+            else
+            {
+                if (_nextCurve == null) _nextCurve = NextNode.gameObject.GetComponent<BezierCurve>();
+                return _nextCurve;
+            }
+
+        }
+    }
+
     public static Node Create(GameObject nodeTemplate, NodeManager nodeManager)
     {
         GameObject nodeGO = Instantiate(nodeTemplate) as GameObject;
@@ -57,15 +86,20 @@ public class Node : MonoBehaviour
         AnchorCurve();
     }
 
+    public void Cleanup()
+    {
+        if (PrevCurve != null) PrevCurve.ClearPoints();
+        if (NextCurve != null) NextCurve.ClearPoints();
+        DestroyImmediate(gameObject);
+    }
+
     private void AnchorCurve()
     {
         if (PreviousNode == null) return;
 
-        BezierCurve nodeCurve = gameObject.GetComponent<BezierCurve>();
-        if (nodeCurve == null) nodeCurve = gameObject.AddComponent<BezierCurve>();
-        nodeCurve.drawColor = Color.cyan;
-        BezierPoint point1 = nodeCurve.AddPointAt(PreviousNode.transform.position);
-        BezierPoint point2 = nodeCurve.AddPointAt(transform.position);
+        PrevCurve.drawColor = Color.cyan;
+        BezierPoint point1 = PrevCurve.AddPointAt(PreviousNode.transform.position);
+        BezierPoint point2 = PrevCurve.AddPointAt(transform.position);
 
         point1.transform.parent = PreviousNode.transform;
     }
