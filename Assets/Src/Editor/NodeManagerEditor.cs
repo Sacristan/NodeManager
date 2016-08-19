@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
-using System.Linq;
 
 [CustomEditor(typeof(NodeManager))]
 public class NodeManagerEditor : Editor
@@ -37,10 +34,10 @@ public class NodeManagerEditor : Editor
 
         for (int i = 0; i < ThisList.arraySize; i++)
         {
-            if (t.Nodes.ElementAtOrDefault(i) == null) continue;
+            if (t.Nodes.Length < i && t.Nodes[i] == null) continue;
 
-            Node node = t.Nodes[i];
-
+            Node node = t.GetNodeAtIndex(i);
+            if (node == null) continue;
             GUILayout.BeginHorizontal();
             GUILayout.Label(node.gameObject.name);
 
