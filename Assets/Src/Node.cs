@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 using System.Collections.Generic;
 
 [ExecuteInEditMode]
@@ -9,49 +7,27 @@ public class Node : MonoBehaviour
     private NodeManager _nodeManager;
     private int _index;
 
-    public Node NextNode { get { return _nodeManager.GetNodeAtIndex(_index + 1); } }
+    private Node _nextNode = null;
+    private Node _prevNode = null;
 
-    int step = 50;
-    private List<GameObject> knobs;
-
-    public void GenerateKnobs()
+    public Node NextNode
     {
-        Node nextNode = NextNode;
-        if (nextNode != null)
+        get
         {
-            Vector2 direction = (nextNode.transform.position - transform.position).normalized;
-
-            //Image image = GetComponent<Image>();
-            //Vector2 sizeDelta = image.rectTransform.rect.center;
-
-            Vector2 startPos = transform.position;
-            Vector2 endPos = nextNode.transform.position;
-
-            //Debug.DrawLine(startPos, endPos, Color.red);
-
-            float distance = Vector2.Distance(startPos, endPos);
-
-            CleanUpKnobs();
-            for (int i = step; i < distance; i += step)
-            {
-                Vector2 calculatedPoint = new Vector2(
-                    transform.position.x + i * direction.x,
-                    transform.position.y + i * direction.y
-                );
-                CreateKnobAtPoint(calculatedPoint);
-            }
+            if (_nextNode == null) _nextNode = _nodeManager.GetNodeAtIndex(_index + 1);
+            return _nextNode;
         }
     }
 
-    public void CleanUpKnobs()
+    public Node PreviousNode
     {
-        foreach (GameObject knob in knobs)
+        get
         {
-            DestroyImmediate(knob);
+            if (_prevNode == null) _prevNode = _nodeManager.GetNodeAtIndex(_index - 1);
+            return _prevNode;
         }
-
-        knobs = new List<GameObject>();
     }
+
 
     public static Node Create(GameObject nodeTemplate, NodeManager nodeManager)
     {
@@ -62,15 +38,22 @@ public class Node : MonoBehaviour
         node._index = nodeManager.Nodes.Count;
 
         node.Setup();
+        node.AnchorCurve();
 
         return node;
     }
 
-    private void CreateKnobAtPoint(Vector2 pos)
+    private void AnchorCurve()
     {
-        GameObject knob = Instantiate(_nodeManager.KnobTemplate, pos, Quaternion.identity) as GameObject;
-        knobs.Add(knob);
-        knob.transform.parent = transform;
+        if (PreviousNode == null) return;
+
+        BezierCurve nodeCurve = gameObject.GetComponent<BezierCurve>();
+        if (nodeCurve == null) nodeCurve = gameObject.AddComponent<BezierCurve>();
+
+        BezierPoint point1 = nodeCurve.AddPointAt(PreviousNode.transform.position);
+        BezierPoint point2 = nodeCurve.AddPointAt(transform.position);
+
+        point1.transform.parent = PreviousNode.transform;
     }
 
     private void Setup()
