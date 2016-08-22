@@ -146,6 +146,11 @@ public class BezierCurve : MonoBehaviour {
 	
 	#region PublicFunctions
 
+    public BezierPoint FirstPoint()
+    {
+        return points[0];
+    }
+
 	/// <summary>
 	/// 	- Adds the given point to the end of the curve ("points" array)
 	/// </summary>

@@ -9,7 +9,6 @@ public class Node : MonoBehaviour
     private Node _nextNode = null;
     private Node _prevNode = null;
 
-    private int _index;
     private BezierCurve _prevCurve;
     private BezierCurve _nextCurve;
 
@@ -35,12 +34,11 @@ public class Node : MonoBehaviour
     {
         get
         {
-            _index = _nodeManager.IndexForNode(this);
-            return _index;
+           return _nodeManager.IndexForNode(this);
         }
     }
 
-    private BezierCurve PrevCurve
+    private BezierCurve ThisCurve
     {
         get
         {
@@ -88,18 +86,35 @@ public class Node : MonoBehaviour
 
     public void Cleanup()
     {
-        if (PrevCurve != null) PrevCurve.ClearPoints();
-        if (NextCurve != null) NextCurve.ClearPoints();
-        DestroyImmediate(gameObject);
+        if (ThisCurve != null)
+        {
+            ThisCurve.ClearPoints();
+            DestroyImmediate(ThisCurve);
+        }
+
+        if (NextCurve != null)
+        {
+            if (PreviousNode == null)
+            {
+                NextCurve.ClearPoints();
+                DestroyImmediate(NextCurve);
+            }
+            else
+            {
+                BezierPoint bezierPoint = NextCurve.FirstPoint();
+                Debug.Log(bezierPoint);
+                bezierPoint.gameObject.transform.parent = PreviousNode.transform;
+            }
+        }
     }
 
     private void AnchorCurve()
     {
         if (PreviousNode == null) return;
 
-        PrevCurve.drawColor = Color.cyan;
-        BezierPoint point1 = PrevCurve.AddPointAt(PreviousNode.transform.position);
-        BezierPoint point2 = PrevCurve.AddPointAt(transform.position);
+        ThisCurve.drawColor = Color.cyan;
+        BezierPoint point1 = ThisCurve.AddPointAt(PreviousNode.transform.position);
+        BezierPoint point2 = ThisCurve.AddPointAt(transform.position);
 
         point1.transform.parent = PreviousNode.transform;
     }

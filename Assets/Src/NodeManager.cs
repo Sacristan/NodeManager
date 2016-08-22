@@ -29,17 +29,20 @@ public class NodeManager : MonoBehaviour
         Node node = GetNodeAtIndex(index);
         if (node != null)
         {
+            node.Cleanup();
+
             List<Node> tmpList = new List<Node>(nodes);
             tmpList.RemoveAt(index);
             nodes = tmpList.ToArray();
 
-            node.Cleanup();
+            DestroyImmediate(node.gameObject);
         }
     }
 
     public Node GetNodeAtIndex(int index)
     {
-        if (index < 0 || nodes.Length < index)
+        Debug.Log(index);
+        if (index < 0 || nodes.Length <= index)
             return null;
         else
             return nodes[index];
