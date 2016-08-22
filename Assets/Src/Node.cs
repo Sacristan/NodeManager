@@ -84,7 +84,7 @@ public class Node : MonoBehaviour
         AnchorCurve();
     }
 
-    public void Cleanup()
+    public void TransferAnchors()
     {
         if (ThisCurve != null)
         {
@@ -102,8 +102,8 @@ public class Node : MonoBehaviour
             else
             {
                 BezierPoint bezierPoint = NextCurve.FirstPoint();
-                Debug.Log(bezierPoint);
-                bezierPoint.gameObject.transform.parent = PreviousNode.transform;
+                bezierPoint.gameObject.transform.parent = PreviousNode.transform; // Ensure parentation on previous node
+                bezierPoint.gameObject.transform.localPosition = Vector3.zero; //Fix relative position
             }
         }
     }

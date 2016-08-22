@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class NodeManager : MonoBehaviour
 {
     [SerializeField]
-    private Node[] nodes;
+    private List<Node> nodes;
 
     [SerializeField]
     private GameObject buttonTemplate;
@@ -12,15 +12,13 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject knobTemplate;
 
-    public int NodesSize { get { return nodes.Length; } }
+    public int NodesSize { get { return nodes.Count; } }
     public GameObject KnobTemplate { get { return knobTemplate; } }
 
     public void AddNode()
     {
-        List<Node> tmpList = new List<Node>(nodes);
         Node node = Node.Create(buttonTemplate, this);
-        tmpList.Add(node);
-        nodes = tmpList.ToArray();
+        nodes.Add(node);
         node.Setup();
     }
 
@@ -29,20 +27,15 @@ public class NodeManager : MonoBehaviour
         Node node = GetNodeAtIndex(index);
         if (node != null)
         {
-            node.Cleanup();
-
-            List<Node> tmpList = new List<Node>(nodes);
-            tmpList.RemoveAt(index);
-            nodes = tmpList.ToArray();
-
+            node.TransferAnchors();
+            nodes.Remove(node);
             DestroyImmediate(node.gameObject);
         }
     }
 
     public Node GetNodeAtIndex(int index)
     {
-        Debug.Log(index);
-        if (index < 0 || nodes.Length <= index)
+        if (index < 0 || nodes.Count <= index)
             return null;
         else
             return nodes[index];
@@ -52,7 +45,7 @@ public class NodeManager : MonoBehaviour
     {
         int result = -1;
 
-        for(int i=0;i< nodes.Length;i++)
+        for(int i=0;i< nodes.Count; i++)
         {
             if (nodes[i].Equals(node))
             {
