@@ -101,7 +101,7 @@ public class Node : MonoBehaviour
             }
             else
             {
-                BezierPoint bezierPoint = NextCurve.FirstPoint();
+                BezierPoint bezierPoint = NextCurve.FirstPoint;
                 bezierPoint.gameObject.transform.parent = PreviousNode.transform; // Ensure parentation on previous node
                 bezierPoint.gameObject.transform.localPosition = Vector3.zero; //Fix relative position
             }

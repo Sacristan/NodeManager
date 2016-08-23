@@ -146,9 +146,19 @@ public class BezierCurve : MonoBehaviour {
 	
 	#region PublicFunctions
 
-    public BezierPoint FirstPoint()
+    public BezierPoint FirstPoint
     {
-        return points[0];
+        get { return points[0]; }
+    }
+
+    public BezierPoint LastPoint
+    {
+        get { return points[points.Length-1]; }
+    }
+
+    public bool IsPointAnAnchor(BezierPoint bezierPoint)
+    {
+       return bezierPoint.Equals(FirstPoint) || bezierPoint.Equals(LastPoint);
     }
 
 	/// <summary>
