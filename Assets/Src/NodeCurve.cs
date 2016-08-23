@@ -1,16 +1,59 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class NodeCurve : MonoBehaviour
 {
     private Node _node;
+    private List<NodeCurvePoint> points = new List<NodeCurvePoint>();
+    private float _length;
 
-    public float Length { get { return 0f; } }
+    public float Length
+    {
+        get
+        {
+            if (IsDirty)
+            {
+                float result = 0f;
+                foreach (NodeCurvePoint nodeCurvePoint in points)
+                    result += nodeCurvePoint.Length;
+
+                _length = result;
+            }
+            return _length;
+        }
+    }
+
+    private bool IsDirty
+    {
+        get
+        {
+            return true;
+        }
+    }
 
     void Awake()
     {
         _node = GetComponentInParent<Node>();
+        GenerateCurvePoints();
+    }
+
+    void Update()
+    {
+        Debug.Log("Current Curve Length: "+Length);
+        //GenerateCurvePoints();
+    }
+
+    private void GenerateCurvePoints()
+    {
+        if (!IsDirty) return;
+
+        Debug.Log("Cleaning up points");
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        Debug.Log("Regenerating points...");
 
         NodeCurvePoint p1 = new GameObject("p1", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
         NodeCurvePoint p2 = new GameObject("p2", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
@@ -34,11 +77,12 @@ public class NodeCurve : MonoBehaviour
         p2.NextPoint = p3;
         p3.NextPoint = p4;
         p4.NextPoint = p5;
-    }
 
-    void Update()
-    {
-
+        points.Add(p1);
+        points.Add(p2);
+        points.Add(p3);
+        points.Add(p4);
+        points.Add(p5);
     }
 
 }
