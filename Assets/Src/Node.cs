@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-[ExecuteInEditMode]
 public class Node : MonoBehaviour
 {
     private NodeManager _nodeManager;
@@ -9,8 +8,8 @@ public class Node : MonoBehaviour
     private Node _nextNode = null;
     private Node _prevNode = null;
 
-    private BezierCurve _prevCurve;
-    private BezierCurve _nextCurve;
+    private NodeCurve _thisCurve;
+    private NodeCurve _nextCurve;
 
     public Node NextNode
     {
@@ -38,17 +37,17 @@ public class Node : MonoBehaviour
         }
     }
 
-    private BezierCurve ThisCurve
+    private NodeCurve ThisCurve
     {
         get
         {
-            _prevCurve = gameObject.GetComponent<BezierCurve>();
-            if (_prevCurve == null) _prevCurve = gameObject.AddComponent<BezierCurve>();
-            return _prevCurve;
+            _thisCurve = gameObject.GetComponent<NodeCurve>();
+            if (_thisCurve == null) _thisCurve = gameObject.AddComponent<NodeCurve>();
+            return _thisCurve;
         }
     }
 
-    private BezierCurve NextCurve
+    private NodeCurve NextCurve
     {
         get
         {
@@ -58,7 +57,7 @@ public class Node : MonoBehaviour
             }
             else
             {
-                if (_nextCurve == null) _nextCurve = NextNode.gameObject.GetComponent<BezierCurve>();
+                if (_nextCurve == null) _nextCurve = NextNode.gameObject.GetComponent<NodeCurve>();
                 return _nextCurve;
             }
 
@@ -86,37 +85,37 @@ public class Node : MonoBehaviour
 
     public void TransferAnchors()
     {
-        if (ThisCurve != null)
-        {
-            ThisCurve.ClearPoints();
-            DestroyImmediate(ThisCurve);
-        }
+        //if (ThisCurve != null)
+        //{
+        //    ThisCurve.ClearPoints();
+        //    DestroyImmediate(ThisCurve);
+        //}
 
-        if (NextCurve != null)
-        {
-            if (PreviousNode == null)
-            {
-                NextCurve.ClearPoints();
-                DestroyImmediate(NextCurve);
-            }
-            else
-            {
-                BezierPoint bezierPoint = NextCurve.FirstPoint;
-                bezierPoint.gameObject.transform.parent = PreviousNode.transform; // Ensure parentation on previous node
-                bezierPoint.gameObject.transform.localPosition = Vector3.zero; //Fix relative position
-            }
-        }
+        //if (NextCurve != null)
+        //{
+        //    if (PreviousNode == null)
+        //    {
+        //        NextCurve.ClearPoints();
+        //        DestroyImmediate(NextCurve);
+        //    }
+        //    else
+        //    {
+        //        BezierPoint bezierPoint = NextCurve.FirstPoint;
+        //        bezierPoint.gameObject.transform.parent = PreviousNode.transform; // Ensure parentation on previous node
+        //        bezierPoint.gameObject.transform.localPosition = Vector3.zero; //Fix relative position
+        //    }
+        //}
     }
 
     private void AnchorCurve()
     {
-        if (PreviousNode == null) return;
+        //if (PreviousNode == null) return;
 
-        ThisCurve.drawColor = Color.cyan;
-        BezierPoint point1 = ThisCurve.AddPointAt(PreviousNode.transform.position);
-        BezierPoint point2 = ThisCurve.AddPointAt(transform.position);
+        //ThisCurve.drawColor = Color.cyan;
+        //BezierPoint point1 = ThisCurve.AddPointAt(PreviousNode.transform.position);
+        //BezierPoint point2 = ThisCurve.AddPointAt(transform.position);
 
-        point1.transform.parent = PreviousNode.transform;
+        //point1.transform.parent = PreviousNode.transform;
     }
 
     private Vector3 GetPosition()
