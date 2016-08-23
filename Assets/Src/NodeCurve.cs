@@ -6,19 +6,17 @@ public class NodeCurve : MonoBehaviour
     private Node _node;
     private List<NodeCurvePoint> points = new List<NodeCurvePoint>();
     private float _length;
+    private float _lastLength;
 
     public float Length
     {
         get
         {
-            if (IsDirty)
-            {
-                float result = 0f;
-                foreach (NodeCurvePoint nodeCurvePoint in points)
-                    result += nodeCurvePoint.Length;
+            float result = 0f;
+            foreach (NodeCurvePoint nodeCurvePoint in points)
+                result += nodeCurvePoint.Length;
 
-                _length = result;
-            }
+            _length = result;
             return _length;
         }
     }
@@ -27,25 +25,26 @@ public class NodeCurve : MonoBehaviour
     {
         get
         {
-            return true;
+            return !(_lastLength > 0) || _lastLength != Length; 
         }
     }
 
     void Awake()
     {
         _node = GetComponentInParent<Node>();
-        GenerateCurvePoints();
+        //GenerateCurvePoints();
     }
 
     void Update()
     {
-        Debug.Log("Current Curve Length: "+Length);
-        //GenerateCurvePoints();
+        //Debug.Log("Current Curve Length: "+Length);
+        GenerateCurvePoints();
     }
 
     private void GenerateCurvePoints()
     {
         if (!IsDirty) return;
+        _lastLength = Length;
 
         Debug.Log("Cleaning up points");
         foreach (Transform child in transform)

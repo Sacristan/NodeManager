@@ -49,7 +49,7 @@ public class NodeCurvePoint : MonoBehaviour
 
     private bool IsDirty
     {
-        get { return _lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position; }
+        get { return (NextPoint == null ) || (_lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position); }
     }
 
     void Update()
