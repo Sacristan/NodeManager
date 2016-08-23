@@ -6,6 +6,9 @@ public class NodeCurvePoint : MonoBehaviour
     private NodeCurvePoint _nextPoint;
     private LineRenderer _lineRenderer;
 
+    private Vector3 _lastPointPosition;
+    private Vector3 _lastNextPointPosition;
+
     private LineRenderer LineRenderer
     {
         get
@@ -15,8 +18,6 @@ public class NodeCurvePoint : MonoBehaviour
                 _lineRenderer = gameObject.AddComponent<LineRenderer>();
                 _lineRenderer.SetWidth(0.04f, 0.04f);
                 _lineRenderer.SetColors(Color.white, Color.white);
-                _lineRenderer.SetPosition(0, Vector3.zero);
-                _lineRenderer.SetPosition(1, Vector3.up);
                 Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
                 _lineRenderer.material = whiteDiffuseMat;
             }
@@ -45,7 +46,14 @@ public class NodeCurvePoint : MonoBehaviour
     private void ScaleLineRenderer()
     {
         if (NextPoint == null) return;
-        LineRenderer.SetPosition(0, (Vector2) transform.position);
-        LineRenderer.SetPosition(1, (Vector2) NextPoint.transform.position);
+
+        if (_lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position)
+        {
+            _lastPointPosition = transform.position;
+            _lastNextPointPosition = NextPoint.transform.position;
+
+            LineRenderer.SetPosition(0, (Vector2)transform.position);
+            LineRenderer.SetPosition(1, (Vector2)NextPoint.transform.position);
+        }
     }
 }
