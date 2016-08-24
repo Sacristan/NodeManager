@@ -11,6 +11,10 @@ public class NodeCurve : MonoBehaviour
 
     private bool _wasDirty = false;
     private int _lastFrameWhenWasDirty = 0;
+    private float _lastGeneratedTime = 0f;
+
+
+    private const float WAITING_TRESHOLD = 1f;
 
     #region PublicProperties
     public float Length
@@ -53,6 +57,7 @@ public class NodeCurve : MonoBehaviour
     #region PrivateMethods
     private void CheckIfCurvePointsNeedToBeGenerated()
     {
+        if (Time.realtimeSinceStartup - _lastGeneratedTime < WAITING_TRESHOLD) return;
         bool isDirty = IsDirty;
         float length = Length;
 
@@ -78,16 +83,18 @@ public class NodeCurve : MonoBehaviour
     {
         int entryDirtyFrame = _lastFrameWhenWasDirty;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(WAITING_TRESHOLD);
 
         if (!IsDirty && entryDirtyFrame == _lastFrameWhenWasDirty)
         {
-            Debug.Log("Just stopped... Should generate!");
+            //Debug.Log("Just stopped... Should generate!");
+            GenerateCurvePoints();
         }
     }
 
     private void GenerateCurvePoints()
     {
+        _lastGeneratedTime = Time.realtimeSinceStartup; 
         Debug.Log("Cleaning up points");
         foreach (Transform child in transform)
         {
