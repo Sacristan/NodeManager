@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class NodeCurve : MonoBehaviour
@@ -8,6 +9,10 @@ public class NodeCurve : MonoBehaviour
     private float _length;
     private float _lastLength;
 
+    private bool _wasDirty = false;
+    private int _lastFrameWhenWasDirty = 0;
+
+    #region PublicProperties
     public float Length
     {
         get
@@ -25,27 +30,64 @@ public class NodeCurve : MonoBehaviour
     {
         get
         {
-            return !(_lastLength > 0) || _lastLength != Length; 
+            bool isDirty = !(_lastLength > 0) || Mathf.Abs(_lastLength - Length) > 0.1f;
+            return isDirty;
         }
     }
+    #endregion
 
+
+    #region UnityMethods
     void Awake()
     {
         _node = GetComponentInParent<Node>();
-        //GenerateCurvePoints();
+        GenerateCurvePoints();
     }
 
     void Update()
     {
-        //Debug.Log("Current Curve Length: "+Length);
-        GenerateCurvePoints();
+        CheckIfCurvePointsNeedToBeGenerated();
+    }
+    #endregion
+
+    #region PrivateMethods
+    private void CheckIfCurvePointsNeedToBeGenerated()
+    {
+        bool isDirty = IsDirty;
+        float length = Length;
+
+        if (!isDirty)
+        {
+            if (_wasDirty && Time.frameCount >= _lastFrameWhenWasDirty + 1)
+            {
+                StartCoroutine(GenerateCurvePointsRoutine());
+            }
+
+            _wasDirty = false;
+        }
+        else
+        {
+            _wasDirty = true;
+            _lastFrameWhenWasDirty = Time.frameCount;
+        }
+
+        _lastLength = length;
+    }
+
+    private IEnumerator GenerateCurvePointsRoutine()
+    {
+        int entryDirtyFrame = _lastFrameWhenWasDirty;
+
+        yield return new WaitForSeconds(1f);
+
+        if (!IsDirty && entryDirtyFrame == _lastFrameWhenWasDirty)
+        {
+            Debug.Log("Just stopped... Should generate!");
+        }
     }
 
     private void GenerateCurvePoints()
     {
-        if (!IsDirty) return;
-        _lastLength = Length;
-
         Debug.Log("Cleaning up points");
         foreach (Transform child in transform)
         {
@@ -68,9 +110,9 @@ public class NodeCurve : MonoBehaviour
 
         p1.transform.localPosition = Vector3.zero;
         p2.transform.localPosition = Vector3.right;
-        p3.transform.localPosition = new Vector3(2, 2, 0);
-        p4.transform.localPosition = new Vector3(2, 5, 0);
-        p5.transform.localPosition = new Vector3(3, 0, 0);
+        p3.transform.localPosition = new Vector3(Random.Range(0, 5), 2, 0);
+        p4.transform.localPosition = new Vector3(Random.Range(0, 5), 5, 0);
+        p5.transform.localPosition = new Vector3(Random.Range(0, 5), 0, 0);
 
         p1.NextPoint = p2;
         p2.NextPoint = p3;
@@ -83,5 +125,6 @@ public class NodeCurve : MonoBehaviour
         points.Add(p4);
         points.Add(p5);
     }
+    #endregion
 
 }
