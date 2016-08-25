@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class NodeCurve : MonoBehaviour
 {
     private Node _node;
-    private Node _nextNode;
+    private Node _prevNode;
 
     private NodeCurvePoint _startAnchor;
     private NodeCurvePoint _endAnchor;
@@ -56,11 +56,11 @@ public class NodeCurve : MonoBehaviour
         }
     }
 
-    private Node NextNode
+    private Node PrevNode
     {
         get
         {
-            if (_nextNode == null) _nextNode = Node.NextNode;
+            if (_prevNode == null) _prevNode = Node.PreviousNode;
             return _node;
         }
     }
@@ -75,6 +75,11 @@ public class NodeCurve : MonoBehaviour
     void Update()
     {
         CheckIfCurvePointsNeedToBeGenerated();
+    }
+
+    void LateUpdate()
+    {
+        InitateAnchorsIfRequired();
     }
     #endregion
 
@@ -98,7 +103,6 @@ public class NodeCurve : MonoBehaviour
     #region PrivateMethods
     private void CheckIfCurvePointsNeedToBeGenerated()
     {
-        InitateAnchorsIfRequired();
         if (Time.realtimeSinceStartup - _lastGeneratedTime < WAITING_TRESHOLD) return;
         bool isDirty = IsDirty;
         float length = Length;
@@ -136,9 +140,9 @@ public class NodeCurve : MonoBehaviour
 
     private void InitateAnchorsIfRequired()
     {
-        if (points.Count > 0 || _creatingAnchors) return;
+        if (points.Count > 0 || _creatingAnchors || Node.IsDirty || PrevNode == null) return;
         _creatingAnchors = true;
-        Debug.Log("I should create anchor points...");
+        Debug.Log("I should create anchor points... "+ PrevNode.gameObject);
 
         _startAnchor = new GameObject("_startAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
         _endAnchor = new GameObject("_endAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
@@ -147,6 +151,11 @@ public class NodeCurve : MonoBehaviour
 
         AddPoint(_startAnchor, true);
         AddPoint(_endAnchor, true);
+
+        _startAnchor.transform.parent = PrevNode.transform;
+
+        _startAnchor.transform.localPosition = Vector3.zero;
+        _endAnchor.transform.localPosition = Vector3.zero;
 
         _creatingAnchors = false;
     }

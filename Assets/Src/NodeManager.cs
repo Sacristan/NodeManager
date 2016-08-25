@@ -31,10 +31,10 @@ public class NodeManager : MonoBehaviour
 
     public Node GetNodeAtIndex(int index)
     {
-        if (index < 0 || nodes.Count <= index)
-            return null;
-        else
-            return nodes[index];
+        Node node = null;
+        if (index >= 0 && nodes.Count > index) node = nodes[index];
+        Debug.Log("Index: "+index+" Node: "+node);
+        return node;
     }
 
     public int IndexForNode(Node node)
