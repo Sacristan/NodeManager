@@ -9,11 +9,7 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject buttonTemplate;
 
-    [SerializeField]
-    private GameObject knobTemplate;
-
     public int NodesSize { get { return nodes.Count; } }
-    public GameObject KnobTemplate { get { return knobTemplate; } }
 
     public void AddNode()
     {
@@ -35,10 +31,10 @@ public class NodeManager : MonoBehaviour
 
     public Node GetNodeAtIndex(int index)
     {
-        if (index < 0 || nodes.Count <= index)
-            return null;
-        else
-            return nodes[index];
+        Node node = null;
+        if (index >= 0 && nodes.Count > index) node = nodes[index];
+        Debug.Log("Index: "+index+" Node: "+node);
+        return node;
     }
 
     public int IndexForNode(Node node)
