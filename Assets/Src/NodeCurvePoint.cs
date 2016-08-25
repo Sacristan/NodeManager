@@ -3,6 +3,9 @@ using System.Collections;
 
 public class NodeCurvePoint : MonoBehaviour
 {
+    private bool isAnchor;
+
+    private NodeCurve _curve;
     private NodeCurvePoint _nextPoint;
     private LineRenderer _lineRenderer;
 
@@ -10,6 +13,9 @@ public class NodeCurvePoint : MonoBehaviour
     private Vector3 _lastNextPointPosition;
 
     private float _length;
+
+    private const float MIN_DISTANCE_PER_POINT = 10f;
+    private const float MAX_DISTANCE_PER_POINT = 25f;
 
     public NodeCurvePoint NextPoint
     {
@@ -31,6 +37,12 @@ public class NodeCurvePoint : MonoBehaviour
         }
     }
 
+    public bool IsAnchor
+    {
+        get { return isAnchor; }
+        set { isAnchor = value; }
+    }
+
     private LineRenderer LineRenderer
     {
         get
@@ -49,7 +61,7 @@ public class NodeCurvePoint : MonoBehaviour
 
     private bool IsDirty
     {
-        get { return (NextPoint == null ) || (_lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position); }
+        get { return (NextPoint == null) || (_lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position); }
     }
 
     void Update()
@@ -62,6 +74,11 @@ public class NodeCurvePoint : MonoBehaviour
         //Cleanup line renderer material from memory to avoid memory leaks
         Renderer renderer = GetComponent<Renderer>();
         if (renderer != null) Destroy(renderer.material);
+    }
+
+    public void HandleCurveChange()
+    {
+        Debug.Log(string.Format("Called HandleCurveChange for {0} / {1}", gameObject.name, gameObject.GetHashCode()));
     }
 
     private void ScaleLineRenderer()

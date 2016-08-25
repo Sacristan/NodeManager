@@ -5,6 +5,11 @@ using System.Collections.Generic;
 public class NodeCurve : MonoBehaviour
 {
     private Node _node;
+    private Node _nextNode;
+
+    private NodeCurvePoint _startAnchor;
+    private NodeCurvePoint _endAnchor;
+
     private List<NodeCurvePoint> points = new List<NodeCurvePoint>();
     private float _length;
     private float _lastLength;
@@ -13,10 +18,11 @@ public class NodeCurve : MonoBehaviour
     private int _lastFrameWhenWasDirty = 0;
     private float _lastGeneratedTime = 0f;
 
-
     private const float WAITING_TRESHOLD = 1f;
 
-    #region PublicProperties
+    private bool _creatingAnchors = false;
+
+    #region PublicGetters
     public float Length
     {
         get
@@ -29,7 +35,9 @@ public class NodeCurve : MonoBehaviour
             return _length;
         }
     }
+    #endregion
 
+    #region PrivateGetters   
     private bool IsDirty
     {
         get
@@ -38,13 +46,29 @@ public class NodeCurve : MonoBehaviour
             return isDirty;
         }
     }
-    #endregion
 
+    private Node Node
+    {
+        get
+        {
+            if (_node == null) _node = GetComponentInParent<Node>();
+            return _node;
+        }
+    }
+
+    private Node NextNode
+    {
+        get
+        {
+            if (_nextNode == null) _nextNode = Node.NextNode;
+            return _node;
+        }
+    }
+    #endregion
 
     #region UnityMethods
     void Awake()
     {
-        _node = GetComponentInParent<Node>();
         GenerateCurvePoints();
     }
 
@@ -54,9 +78,27 @@ public class NodeCurve : MonoBehaviour
     }
     #endregion
 
+    #region PublicMethods
+    public void AddPoint(NodeCurvePoint point, bool isAnchor)
+    {
+        point.IsAnchor = isAnchor;
+        points.Add(point);
+
+        point.transform.parent = transform;
+    }
+
+    public void RemovePoint(NodeCurvePoint point)
+    {
+        if (point.IsAnchor) Debug.LogError("NodeCurve Cannot Remove Anchor Points");
+        points.Remove(point);
+        Destroy(point.gameObject);
+    }
+    #endregion
+
     #region PrivateMethods
     private void CheckIfCurvePointsNeedToBeGenerated()
     {
+        InitateAnchorsIfRequired();
         if (Time.realtimeSinceStartup - _lastGeneratedTime < WAITING_TRESHOLD) return;
         bool isDirty = IsDirty;
         float length = Length;
@@ -92,45 +134,33 @@ public class NodeCurve : MonoBehaviour
         }
     }
 
+    private void InitateAnchorsIfRequired()
+    {
+        if (points.Count > 0 || _creatingAnchors) return;
+        _creatingAnchors = true;
+        Debug.Log("I should create anchor points...");
+
+        _startAnchor = new GameObject("_startAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
+        _endAnchor = new GameObject("_endAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
+
+        _startAnchor.NextPoint = _endAnchor;
+
+        AddPoint(_startAnchor, true);
+        AddPoint(_endAnchor, true);
+
+        _creatingAnchors = false;
+    }
+
     private void GenerateCurvePoints()
     {
-        _lastGeneratedTime = Time.realtimeSinceStartup; 
-        Debug.Log("Cleaning up points");
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
+        _lastGeneratedTime = Time.realtimeSinceStartup;
 
         Debug.Log("Regenerating points...");
 
-        NodeCurvePoint p1 = new GameObject("p1", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-        NodeCurvePoint p2 = new GameObject("p2", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-        NodeCurvePoint p3 = new GameObject("p3", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-        NodeCurvePoint p4 = new GameObject("p4", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-        NodeCurvePoint p5 = new GameObject("p5", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-
-        p1.transform.parent = transform;
-        p2.transform.parent = transform;
-        p3.transform.parent = transform;
-        p4.transform.parent = transform;
-        p5.transform.parent = transform;
-
-        p1.transform.localPosition = Vector3.zero;
-        p2.transform.localPosition = Vector3.right;
-        p3.transform.localPosition = new Vector3(Random.Range(0, 5), 2, 0);
-        p4.transform.localPosition = new Vector3(Random.Range(0, 5), 5, 0);
-        p5.transform.localPosition = new Vector3(Random.Range(0, 5), 0, 0);
-
-        p1.NextPoint = p2;
-        p2.NextPoint = p3;
-        p3.NextPoint = p4;
-        p4.NextPoint = p5;
-
-        points.Add(p1);
-        points.Add(p2);
-        points.Add(p3);
-        points.Add(p4);
-        points.Add(p5);
+        foreach (NodeCurvePoint point in points)
+        {
+            point.HandleCurveChange();
+        }
     }
     #endregion
 
