@@ -84,6 +84,7 @@ public class NodeCurve : MonoBehaviour
     public void AddPoint(NodeCurvePoint point, bool isAnchor)
     {
         point.IsAnchor = isAnchor;
+        point.Curve = this;
         points.Add(point);
 
         point.transform.parent = transform;
@@ -150,7 +151,10 @@ public class NodeCurve : MonoBehaviour
         AddPoint(_startAnchor, true);
         AddPoint(_endAnchor, true);
 
-        _startAnchor.transform.parent = PrevNode.transform;
+        NodeCurve prevCurve = PrevNode.GetComponentInChildren<NodeCurve>();
+
+        _startAnchor.Curve = prevCurve;
+        _startAnchor.transform.parent = prevCurve.transform;
 
         _startAnchor.transform.localPosition = Vector3.zero;
         _endAnchor.transform.localPosition = Vector3.zero;

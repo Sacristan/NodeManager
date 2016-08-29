@@ -43,6 +43,12 @@ public class NodeCurvePoint : MonoBehaviour
         set { isAnchor = value; }
     }
 
+
+    public NodeCurve Curve
+    {
+        set { _curve = value; }
+    }
+
     private LineRenderer LineRenderer
     {
         get
