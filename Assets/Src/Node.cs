@@ -28,9 +28,8 @@ public class Node : MonoBehaviour
     public Node PreviousNode
     {
         get
-        {
+        {   if (Index < 0) return null;
             if (_prevNode == null) _prevNode = _nodeManager.GetNodeAtIndex(Index - 1);
-            if (this.Equals(_prevNode)) Debug.Log("Previous Node Cannot be Equal to Current One");
             return _prevNode;
         }
     }

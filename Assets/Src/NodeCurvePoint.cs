@@ -50,8 +50,8 @@ public class NodeCurvePoint : MonoBehaviour
             if (_lineRenderer == null)
             {
                 _lineRenderer = gameObject.AddComponent<LineRenderer>();
-                _lineRenderer.SetWidth(0.04f, 0.04f);
-                _lineRenderer.SetColors(Color.white, Color.white);
+                //_lineRenderer.SetWidth(1f, 1f);
+                _lineRenderer.SetColors(Color.yellow, Color.yellow);
                 Material whiteDiffuseMat = new Material(Shader.Find("Unlit/Texture"));
                 _lineRenderer.material = whiteDiffuseMat;
             }
