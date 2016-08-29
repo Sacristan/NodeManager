@@ -178,7 +178,8 @@ public class NodeCurve : MonoBehaviour
 
         Debug.Log("Regenerating points...");
 
-        foreach (NodeCurvePoint point in points)
+        //Changed points to array, because Threw InvalidOperationException: Collection was modified; enumeration operation may not execute.
+        foreach (NodeCurvePoint point in points.ToArray())
         {
             point.HandleCurveChange();
         }

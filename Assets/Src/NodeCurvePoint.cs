@@ -144,6 +144,10 @@ public class NodeCurvePoint : MonoBehaviour
     {
         if (IsAnchor) return;
         Debug.Log("Called RemoveMeFromCurve...");
+        
+        //Handle transfer next point
+        //_curve.RemovePoint(this);
+        //Destroy(gameObject);
     }
 
 }
