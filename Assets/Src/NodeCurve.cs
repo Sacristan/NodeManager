@@ -81,7 +81,17 @@ public class NodeCurve : MonoBehaviour
     #endregion
 
     #region PublicMethods
-    public void AddPoint(NodeCurvePoint point, bool isAnchor)
+    public NodeCurvePoint AddPointAt(Vector2 pos)
+    {
+        Debug.Log("Addding Point At: "+pos);
+        NodeCurvePoint point = NodeCurvePoint.Create();
+        point.transform.position = pos;
+        AddPoint(point);
+
+        return point;
+    }
+
+    public void AddPoint(NodeCurvePoint point, bool isAnchor=false)
     {
         point.IsAnchor = isAnchor;
         point.Curve = this;
@@ -143,8 +153,8 @@ public class NodeCurve : MonoBehaviour
         _creatingAnchors = true;
         //Debug.Log(string.Format("I should create anchor points... Prev: {0} Curr: {1}", PrevNode, Node));
 
-        _startAnchor = new GameObject("_startAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
-        _endAnchor = new GameObject("_endAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
+        _startAnchor = NodeCurvePoint.Create("_startAnchor");
+        _endAnchor = NodeCurvePoint.Create("_endAnchor");
 
         _startAnchor.NextPoint = _endAnchor;
 

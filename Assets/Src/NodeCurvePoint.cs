@@ -15,13 +15,14 @@ public class NodeCurvePoint : MonoBehaviour
     private float _length;
 
     private const float MIN_DISTANCE_PER_POINT = 10f;
-    private const float MAX_DISTANCE_PER_POINT = 25f;
+    private const float MAX_DISTANCE_PER_POINT = 50f;
 
     public NodeCurvePoint NextPoint
     {
         get { return _nextPoint; }
         set { _nextPoint = value; }
     }
+
     public float Length
     {
         get
@@ -65,6 +66,16 @@ public class NodeCurvePoint : MonoBehaviour
         }
     }
 
+    private Vector2 DirectionTowardsNextPoint
+    {
+        get
+        {
+            Vector2 result = Vector2.zero;
+            if (_nextPoint != null) result = (_nextPoint.transform.position - transform.position).normalized;
+            return result;
+        }
+    }
+
     private bool IsDirty
     {
         get { return (NextPoint == null) || (_lastPointPosition != transform.position || _lastNextPointPosition != NextPoint.transform.position); }
@@ -84,7 +95,17 @@ public class NodeCurvePoint : MonoBehaviour
 
     public void HandleCurveChange()
     {
-        Debug.Log(string.Format("Called HandleCurveChange for {0} / {1}", gameObject.name, gameObject.GetHashCode()));
+        Debug.Log(string.Format("Called HandleCurveChange for {0} / Length: {1} ", gameObject.name, Length));
+
+        if (Length > MAX_DISTANCE_PER_POINT) AddNewPointToCurve();
+        else if (Length < MIN_DISTANCE_PER_POINT) RemoveMeFromCurve();
+    }
+
+    public static NodeCurvePoint Create(string pName=null)
+    {
+        string name = pName ?? "point";
+        GameObject createdObject = new GameObject(name, typeof(NodeCurvePoint));
+        return createdObject.GetComponent<NodeCurvePoint>();
     }
 
     private void ScaleLineRenderer()
@@ -100,4 +121,29 @@ public class NodeCurvePoint : MonoBehaviour
         LineRenderer.SetPosition(0, (Vector2)pos1);
         LineRenderer.SetPosition(1, (Vector2)pos2);
     }
+
+    private void AddNewPointToCurve()
+    {
+        Debug.Log("Called AddNewPointToCurve... " + DirectionTowardsNextPoint);
+
+        if (DirectionTowardsNextPoint == Vector2.zero)
+        {
+            Debug.Log("DirectionTowardsNextPoint is zero... Skipping...");
+            return;
+        }
+
+        Vector2 calculatedPosition = (Vector2)transform.position + (DirectionTowardsNextPoint * MAX_DISTANCE_PER_POINT);
+
+        NodeCurvePoint newPoint = _curve.AddPointAt(calculatedPosition);
+
+        newPoint.NextPoint = _nextPoint;
+        this.NextPoint = newPoint;
+    }
+
+    private void RemoveMeFromCurve()
+    {
+        if (IsAnchor) return;
+        Debug.Log("Called RemoveMeFromCurve...");
+    }
+
 }
