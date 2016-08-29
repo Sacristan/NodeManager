@@ -9,9 +9,22 @@ public class NodeManager : MonoBehaviour
     [SerializeField]
     private GameObject buttonTemplate;
 
+    [SerializeField]
+    private GameObject knobTemplate;
+
     public int NodesSize { get { return nodes.Count; } }
 
     private bool indexForNodeLock = false;
+
+    private static NodeManager instance;
+
+    public static GameObject KnobTemplate { get { return instance.knobTemplate; } }
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+    }
 
     public void AddNode()
     {

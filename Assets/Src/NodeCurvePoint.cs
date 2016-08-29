@@ -104,7 +104,8 @@ public class NodeCurvePoint : MonoBehaviour
     public static NodeCurvePoint Create(string pName=null)
     {
         string name = pName ?? "point";
-        GameObject createdObject = new GameObject(name, typeof(NodeCurvePoint));
+        GameObject createdObject = Instantiate(NodeManager.KnobTemplate) as GameObject;
+        createdObject.AddComponent<NodeCurvePoint>();
         return createdObject.GetComponent<NodeCurvePoint>();
     }
 
