@@ -11,6 +11,8 @@ public class NodeManager : MonoBehaviour
 
     public int NodesSize { get { return nodes.Count; } }
 
+    private bool indexForNodeLock = false;
+
     public void AddNode()
     {
         Node node = Node.Create(buttonTemplate, this);
@@ -33,23 +35,14 @@ public class NodeManager : MonoBehaviour
     {
         Node node = null;
         if (index >= 0 && nodes.Count > index) node = nodes[index];
-        Debug.Log("Index: "+index+" Node: "+node);
+        //Debug.Log("Index: "+index+" Node: "+node);
         return node;
     }
 
     public int IndexForNode(Node node)
     {
         int result = -1;
-
-        for(int i=0;i< nodes.Count; i++)
-        {
-            if (nodes[i].Equals(node))
-            {
-                result = i;
-                break;
-            } 
-        }
-
+        result = nodes.IndexOf(node);
         return result;
     }
 

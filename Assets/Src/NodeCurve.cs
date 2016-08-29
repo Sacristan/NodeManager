@@ -61,7 +61,7 @@ public class NodeCurve : MonoBehaviour
         get
         {
             if (_prevNode == null) _prevNode = Node.PreviousNode;
-            return _node;
+            return _prevNode;
         }
     }
     #endregion
@@ -74,13 +74,10 @@ public class NodeCurve : MonoBehaviour
 
     void Update()
     {
+        InitateAnchorsIfRequired();
         CheckIfCurvePointsNeedToBeGenerated();
     }
 
-    void LateUpdate()
-    {
-        InitateAnchorsIfRequired();
-    }
     #endregion
 
     #region PublicMethods
@@ -103,6 +100,7 @@ public class NodeCurve : MonoBehaviour
     #region PrivateMethods
     private void CheckIfCurvePointsNeedToBeGenerated()
     {
+        
         if (Time.realtimeSinceStartup - _lastGeneratedTime < WAITING_TRESHOLD) return;
         bool isDirty = IsDirty;
         float length = Length;
@@ -140,9 +138,9 @@ public class NodeCurve : MonoBehaviour
 
     private void InitateAnchorsIfRequired()
     {
-        if (points.Count > 0 || _creatingAnchors || Node.IsDirty || PrevNode == null) return;
+        if (_creatingAnchors || points.Count > 0 || Node.IsDirty || PrevNode == null) return;
         _creatingAnchors = true;
-        Debug.Log("I should create anchor points... "+ PrevNode.gameObject);
+        //Debug.Log(string.Format("I should create anchor points... Prev: {0} Curr: {1}", PrevNode, Node));
 
         _startAnchor = new GameObject("_startAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
         _endAnchor = new GameObject("_endAnchor", typeof(NodeCurvePoint)).GetComponent<NodeCurvePoint>();
