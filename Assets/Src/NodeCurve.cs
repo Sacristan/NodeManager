@@ -96,7 +96,7 @@ public class NodeCurve : MonoBehaviour
         point.Curve = this;
         points.Add(point);
 
-        point.transform.parent = transform;
+        point.transform.SetParent(transform);
     }
 
     public void RemovePoint(NodeCurvePoint point)
@@ -163,7 +163,7 @@ public class NodeCurve : MonoBehaviour
         NodeCurve prevCurve = PrevNode.GetComponentInChildren<NodeCurve>();
 
         _startAnchor.Curve = prevCurve;
-        _startAnchor.transform.parent = prevCurve.transform;
+        _startAnchor.transform.SetParent(prevCurve.transform);
 
         _startAnchor.transform.localPosition = Vector3.zero;
         _endAnchor.transform.localPosition = Vector3.zero;
