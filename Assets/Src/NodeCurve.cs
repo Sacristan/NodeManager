@@ -84,10 +84,18 @@ public class NodeCurve : MonoBehaviour
     public NodeCurvePoint AddPointAt(Vector2 pos)
     {
         Debug.Log("Addding Point At: "+pos);
-        NodeCurvePoint point = NodeCurvePoint.Create();
-        point.transform.position = pos;
-        AddPoint(point);
+        NodeCurvePoint point = null;
 
+        if (HasPointAtPosition(pos))
+        {
+            Debug.Log("Theres a point already at "+pos);
+        }
+        else
+        {
+            point = NodeCurvePoint.Create();
+            point.transform.position = pos;
+            AddPoint(point);
+        }
         return point;
     }
 
@@ -108,6 +116,17 @@ public class NodeCurve : MonoBehaviour
     #endregion
 
     #region PrivateMethods
+
+    private bool HasPointAtPosition(Vector2 pos)
+    {
+        foreach (NodeCurvePoint point in points.ToArray())
+        {
+            if(!point.IsAnchor && point.Image.rectTransform.rect.Contains(pos)) return true;
+        }
+
+        return false;
+    }
+
     private void CheckIfCurvePointsNeedToBeGenerated()
     {
         

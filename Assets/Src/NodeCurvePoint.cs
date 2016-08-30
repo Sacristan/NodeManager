@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class NodeCurvePoint : MonoBehaviour
@@ -45,10 +46,14 @@ public class NodeCurvePoint : MonoBehaviour
         get { return isAnchor; }
     }
 
-
     public NodeCurve Curve
     {
         set { _curve = value; }
+    }
+
+    public Image Image
+    {
+        get { return GetComponent<Image>(); }
     }
 
     private LineRenderer LineRenderer
