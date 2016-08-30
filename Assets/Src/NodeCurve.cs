@@ -93,7 +93,6 @@ public class NodeCurve : MonoBehaviour
 
     public void AddPoint(NodeCurvePoint point, bool isAnchor=false)
     {
-        point.IsAnchor = isAnchor;
         point.Curve = this;
         points.Add(point);
 
@@ -153,8 +152,8 @@ public class NodeCurve : MonoBehaviour
         _creatingAnchors = true;
         //Debug.Log(string.Format("I should create anchor points... Prev: {0} Curr: {1}", PrevNode, Node));
 
-        _startAnchor = NodeCurvePoint.Create("_startAnchor");
-        _endAnchor = NodeCurvePoint.Create("_endAnchor");
+        _startAnchor = NodeCurvePoint.Create("_startAnchor", true);
+        _endAnchor = NodeCurvePoint.Create("_endAnchor", true);
 
         _startAnchor.NextPoint = _endAnchor;
 

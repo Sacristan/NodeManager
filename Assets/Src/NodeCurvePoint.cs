@@ -3,7 +3,7 @@ using System.Collections;
 
 public class NodeCurvePoint : MonoBehaviour
 {
-    private bool isAnchor;
+    private bool isAnchor = false;
 
     private NodeCurve _curve;
     private NodeCurvePoint _nextPoint;
@@ -16,6 +16,8 @@ public class NodeCurvePoint : MonoBehaviour
 
     private const float MIN_DISTANCE_PER_POINT = 10f;
     private const float MAX_DISTANCE_PER_POINT = 50f;
+
+    private const float ANCHOR_OFFSET_DISTANCE = 50f;
 
     public NodeCurvePoint NextPoint
     {
@@ -41,7 +43,6 @@ public class NodeCurvePoint : MonoBehaviour
     public bool IsAnchor
     {
         get { return isAnchor; }
-        set { isAnchor = value; }
     }
 
 
@@ -101,12 +102,14 @@ public class NodeCurvePoint : MonoBehaviour
         else if (Length < MIN_DISTANCE_PER_POINT) RemoveMeFromCurve();
     }
 
-    public static NodeCurvePoint Create(string pName=null)
+    public static NodeCurvePoint Create(string pName=null, bool pIsAnchor=false)
     {
         string name = pName ?? "point";
         GameObject createdObject = Instantiate(NodeManager.KnobTemplate) as GameObject;
-        createdObject.AddComponent<NodeCurvePoint>();
-        return createdObject.GetComponent<NodeCurvePoint>();
+        NodeCurvePoint point = createdObject.AddComponent<NodeCurvePoint>();
+        point.isAnchor = pIsAnchor;
+        if (point.IsAnchor) Destroy(createdObject.GetComponent<UnityEngine.UI.Image>());
+        return point;
     }
 
     private void ScaleLineRenderer()
