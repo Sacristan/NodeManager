@@ -17,7 +17,7 @@ public class NodeCurvePoint : MonoBehaviour
     private const float MIN_DISTANCE_PER_POINT = 10f;
     private const float MAX_DISTANCE_PER_POINT = 50f;
 
-    private const float ANCHOR_OFFSET_DISTANCE = 50f;
+    private const float ANCHOR_OFFSET_DISTANCE = 10f;
 
     public NodeCurvePoint NextPoint
     {
@@ -105,8 +105,22 @@ public class NodeCurvePoint : MonoBehaviour
     public static NodeCurvePoint Create(string pName=null, bool pIsAnchor=false)
     {
         string name = pName ?? "point";
-        GameObject createdObject = Instantiate(NodeManager.KnobTemplate) as GameObject;
-        NodeCurvePoint point = createdObject.AddComponent<NodeCurvePoint>();
+
+        GameObject createdObject;
+        NodeCurvePoint point;
+
+        if (pIsAnchor)
+        {
+            createdObject = new GameObject(name, typeof(NodeCurvePoint));
+            point = createdObject.GetComponent<NodeCurvePoint>();
+        }
+        else
+        {
+            createdObject = Instantiate(NodeManager.KnobTemplate) as GameObject;
+            point = createdObject.AddComponent<NodeCurvePoint>();
+            createdObject.name = name;
+        }
+
         point.isAnchor = pIsAnchor;
         if (point.IsAnchor) Destroy(createdObject.GetComponent<UnityEngine.UI.Image>());
         return point;
@@ -128,13 +142,11 @@ public class NodeCurvePoint : MonoBehaviour
 
     private void AddNewPointToCurve()
     {
-        Debug.Log("Called AddNewPointToCurve... " + DirectionTowardsNextPoint);
+        if (_nextPoint == null) return;
+        if ((IsAnchor || _nextPoint.IsAnchor) && Length < MAX_DISTANCE_PER_POINT + ANCHOR_OFFSET_DISTANCE) return;
+        if (DirectionTowardsNextPoint == Vector2.zero) return;
 
-        if (DirectionTowardsNextPoint == Vector2.zero)
-        {
-            Debug.Log("DirectionTowardsNextPoint is zero... Skipping...");
-            return;
-        }
+        Debug.Log("Called AddNewPointToCurve... " + DirectionTowardsNextPoint);
 
         Vector2 calculatedPosition = (Vector2)transform.position + (DirectionTowardsNextPoint * MAX_DISTANCE_PER_POINT);
 

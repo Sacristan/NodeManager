@@ -14,8 +14,6 @@ public class NodeManager : MonoBehaviour
 
     public int NodesSize { get { return nodes.Count; } }
 
-    private bool indexForNodeLock = false;
-
     private static NodeManager instance;
 
     public static GameObject KnobTemplate { get { return instance.knobTemplate; } }
